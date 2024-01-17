@@ -1,15 +1,12 @@
-const { setMaxListeners } = require("events");
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
   cors: {
-    origin: ["http://127.0.0.1:5173"],
+    origin: ["https://fh-websocket-api.onrender.com"],
   },
 });
 const port = 3000;
-
-setMaxListeners(0);
 
 io.on("connection", (socket) => {
   const room = parseInt(socket.handshake.query.id);
