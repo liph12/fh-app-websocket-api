@@ -30,6 +30,10 @@ io.on("connection", (socket) => {
     console.log(`${req.recipient} notifications updated!`);
   });
 
+  socket.on("send-notification-all", function () {
+    io.sockets.emit("receive-notification");
+  });
+
   socket.on("mark-as-seen-conversation", function (user, id) {
     io.sockets.in(user).emit("is-seen-conversation", id);
 
