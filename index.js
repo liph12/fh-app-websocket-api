@@ -10,8 +10,15 @@ const io = require("socket.io")(server, {
 const port = 3000;
 
 io.on("connection", (socket) => {
-  const room = parseInt(socket.handshake.query.id);
+  let room;
+  const roomId = socket.handshake.query.id;
+  const strRoomId = roomId.toString();
+
+  room = strRoomId.includes("-") ? strRoomId : parseInt(roomId);
   console.log("Connection established!", room);
+
+  socket.join(room);
+  io.to(room).emit("receive-notification");
 
   socket.join(room);
   io.to(room).emit("receive-notification");
