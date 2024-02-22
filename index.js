@@ -12,9 +12,8 @@ const port = 3000;
 io.on("connection", (socket) => {
   let room;
   const roomId = socket.handshake.query.id;
-  const strRoomId = roomId.toString();
 
-  room = strRoomId.includes("-") ? strRoomId : parseInt(roomId);
+  room = roomId.includes("-") ? roomId : parseInt(roomId);
   console.log("Connection established!", room);
 
   socket.join(room);
