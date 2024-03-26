@@ -19,9 +19,6 @@ io.on("connection", (socket) => {
   socket.join(room);
   io.to(room).emit("receive-notification");
 
-  socket.join(room);
-  io.to(room).emit("receive-notification");
-
   socket.on("send-message", function (req) {
     console.log(req.recipient, req.message);
     io.sockets.in(req.recipient).emit("receive-message", req.message);
