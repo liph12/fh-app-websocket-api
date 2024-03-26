@@ -45,6 +45,8 @@ io.on("connection", (socket) => {
 
   socket.on("update-account", function (req) {
     io.sockets.in(req.sessionId).emit("receive-account-update", req);
+
+    console.log(`account update has been requested.`);
   });
 });
 
