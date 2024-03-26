@@ -42,6 +42,10 @@ io.on("connection", (socket) => {
 
     console.log(`${user} has read the conversation`);
   });
+
+  socket.on("update-account", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-account-update", req);
+  });
 });
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
