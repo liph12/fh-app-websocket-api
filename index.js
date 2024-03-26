@@ -13,7 +13,7 @@ io.on("connection", (socket) => {
   let room;
   const roomId = socket.handshake.query.id;
 
-  room = roomId.includes("-") ? roomId : parseInt(roomId);
+  room = parseInt(roomId);
   console.log("Connection established!", room);
 
   socket.join(room);
