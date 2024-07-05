@@ -48,6 +48,12 @@ io.on("connection", (socket) => {
 
     console.log(`account update has been requested.`);
   });
+
+  socket.on("update-split-comm", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-split-comm-update", req);
+
+    console.log(`split-comm request updated.`);
+  });
 });
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
