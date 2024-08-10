@@ -9,12 +9,20 @@ const io = require("socket.io")(server, {
 
 const port = 3000;
 
+let activeConnections = {};
+
 io.on("connection", (socket) => {
   let room;
-  const roomId = socket.handshake.query.id;
+  const roomId = parseInt(socket.handshake.query.id);
 
-  room = parseInt(roomId);
-  console.log("Connection established!", room);
+  if (activeConnections[roomId]) {
+    console.log(
+      `Reconnection or duplicate connection attempt in room ${roomId}`
+    );
+  } else {
+    activeConnections[roomId] = true; // Mark this room as having an active connection
+    console.log("New connection established!", roomId);
+  }
 
   socket.join(room);
   io.to(room).emit("receive-notification");
