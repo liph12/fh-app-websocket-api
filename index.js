@@ -54,6 +54,12 @@ io.on("connection", (socket) => {
 
     console.log(`split-comm request updated.`);
   });
+
+  socket.on("update-active-session", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-session-update", req);
+
+    console.log(`user session updated.`);
+  });
 });
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
