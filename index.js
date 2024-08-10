@@ -9,65 +9,57 @@ const io = require("socket.io")(server, {
 
 const port = 3000;
 
-let activeConnections = {};
-
 io.on("connection", (socket) => {
   let room;
-  const roomId = parseInt(socket.handshake.query.id);
+  const roomId = socket.handshake.query.id;
 
-  if (activeConnections[roomId]) {
-    console.log(
-      `Reconnection or duplicate connection attempt in room ${roomId}`
-    );
-  } else {
-    activeConnections[roomId] = true; // Mark this room as having an active connection
-    console.log("New connection established!", roomId);
+  room = parseInt(roomId);
+  console.log("Connection established!", room);
 
-    socket.join(roomId);
-    io.to(roomId).emit("receive-notification");
+  socket.join(room);
+  io.to(room).emit("receive-notification");
 
-    socket.on("send-message", function (req) {
-      console.log(req.recipient, req.message);
-      io.sockets.in(req.recipient).emit("receive-message", req.message);
-      io.sockets.in(req.recipient).emit("receive-conversation", req.sender);
-      console.log(`Message for ${req.recipient}: ${req.message}`);
-    });
+  socket.on("send-message", function (req) {
+    console.log(req.recipient, req.message);
+    io.sockets.in(req.recipient).emit("receive-message", req.message);
+    io.sockets.in(req.recipient).emit("receive-conversation", req.sender);
+    console.log(`Message for ${req.recipient}: ${req.message}`);
+  });
 
-    socket.on("send-notification", function (req) {
-      console.log(req);
-      io.sockets.in(req.recipient).emit("receive-notification", req);
+  socket.on("send-notification", function (req) {
+    console.log(req);
+    io.sockets.in(req.recipient).emit("receive-notification", req);
 
-      console.log(`${req.recipient} notifications updated!`);
-    });
+    console.log(`${req.recipient} notifications updated!`);
+  });
 
-    socket.on("send-notification-all", function () {
-      io.sockets.emit("receive-notification");
-    });
+  socket.on("send-notification-all", function () {
+    io.sockets.emit("receive-notification");
+  });
 
-    socket.on("mark-as-seen-conversation", function (user, id) {
-      io.sockets.in(user).emit("is-seen-conversation", id);
+  socket.on("mark-as-seen-conversation", function (user, id) {
+    io.sockets.in(user).emit("is-seen-conversation", id);
 
-      console.log(`${user} has read the conversation`);
-    });
+    console.log(`${user} has read the conversation`);
+  });
 
-    socket.on("update-account", function (req) {
-      io.sockets.in(req.sessionId).emit("receive-account-update", req);
+  socket.on("update-account", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-account-update", req);
 
-      console.log(`account update has been requested.`);
-    });
+    console.log(`account update has been requested.`);
+  });
 
-    socket.on("update-split-comm", function (req) {
-      io.sockets.in(req.sessionId).emit("receive-split-comm-update", req);
+  socket.on("update-split-comm", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-split-comm-update", req);
 
-      console.log(`split-comm request updated.`);
-    });
+    console.log(`split-comm request updated.`);
+  });
 
-    socket.on("update-active-session", function (req) {
-      io.sockets.in(req.sessionId).emit("receive-session-update", req);
+  socket.on("update-active-session", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-session-update", req);
 
-      console.log(`user session updated.`);
-    });
-  }
+    console.log(`user session updated.`);
+  });
 });
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
