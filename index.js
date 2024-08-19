@@ -60,6 +60,12 @@ io.on("connection", (socket) => {
 
     console.log(`user session updated.`);
   });
+
+  socket.on("send-auth-session", function (req) {
+    io.sockets.in(req.sessionId).emit("receive-auth-session", req);
+
+    console.log(`user auth sent.`);
+  });
 });
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
